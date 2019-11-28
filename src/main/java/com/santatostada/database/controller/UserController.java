@@ -1,5 +1,6 @@
 package com.santatostada.database.controller;
 
+import com.santatostada.database.entity.UpdatedUser;
 import com.santatostada.database.entity.User;
 import com.santatostada.database.validation.EmailValidation;
 import com.santatostada.database.validation.PhoneValidation;
@@ -49,17 +50,13 @@ public class UserController {
 
 
     @RequestMapping("/updateStatus")
-    public Map<String, String> updateStatus(@Valid @NotNull @RequestParam(name="id") int id,
-                               @Valid @NotBlank @RequestParam(name="user_status") String userStatus) {
+    public UpdatedUser updateStatus(@Valid @NotNull @RequestParam(name="id") int id,
+                                    @Valid @NotBlank @RequestParam(name="user_status") String userStatus) {
         StatusValidation statusValidation = new StatusValidation();
         if (!statusValidation.validate(userStatus))
             throw new IllegalArgumentException("incorrect status");
         String oldStatus = userService.updateUser(id, userStatus);
-        Map<String, String> result = new HashMap<>();
-        result.put("id", String.valueOf(userService.findById(id).getId()));
-        result.put("old_status", oldStatus);
-        result.put("new_status", userStatus);
-        return result;
+        return new UpdatedUser(userService.findById(id).getId(), oldStatus, userStatus);
     }
 
     @RequestMapping("/getUser")
