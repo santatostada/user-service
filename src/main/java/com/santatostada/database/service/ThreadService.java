@@ -13,6 +13,7 @@ public class ThreadService extends Thread {
         this.userRepository = userRepository;
         this.id = id;
         this.status = status;
+        this.setName(String.valueOf(id));
     }
 
     @Override

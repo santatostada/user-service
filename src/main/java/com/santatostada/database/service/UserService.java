@@ -5,14 +5,14 @@ import com.santatostada.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static java.lang.Thread.sleep;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Service
 public class UserService {
     @Autowired
     private final UserRepository userRepository;
+
 
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -29,6 +29,11 @@ public class UserService {
 
     public String updateUser(int id, String status){
         if (status.equals("away") && userRepository.findById(id).getStatus().equals("online")){
+            Thread thread = Thread.getAllStackTraces().keySet().stream().filter(x -> x.getName()
+                    .equals(String.valueOf(id))).findFirst().orElse(null);
+            if(thread != null){
+                thread.interrupt();
+            }
             ThreadService threadService = new ThreadService(userRepository, id, status);
             threadService.start();
         }
